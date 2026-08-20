@@ -1,0 +1,733 @@
+/* ================================
+   RUNR — GAME UI
+================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  background: #07080c;
+  color: white;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+button {
+  font-family: inherit;
+}
+
+.runr-app {
+  min-height: 100vh;
+  padding: 18px 24px 48px;
+  background:
+    radial-gradient(circle at 50% -20%, #29313f 0%, #0b1018 35%, #050609 75%);
+}
+
+/* HEADER */
+
+.runr-header {
+  width: min(1280px, 100%);
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.runr-logo {
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: -3px;
+  background: linear-gradient(90deg, #38bdf8, #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.runr-tagline {
+  margin-top: 2px;
+  color: #7f8998;
+  font-size: 9px;
+  letter-spacing: 3px;
+}
+
+.live-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid #26303d;
+  border-radius: 20px;
+  background: rgba(12, 16, 23, 0.85);
+  color: #9aa4b2;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+
+.live-status .live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #55f28c;
+  box-shadow: 0 0 12px #55f28c;
+}
+
+.live-status.offline .live-dot {
+  background: #fbbf24;
+  box-shadow: 0 0 12px #fbbf24;
+}
+
+.live-status.offline {
+  border-color: #4d4020;
+  color: #fbbf24;
+}
+
+/* GAME + CAMERA SIDE BY SIDE */
+
+.play-area {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.game-shell {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #293342;
+  border-radius: 16px;
+  background: #101722;
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.55),
+    inset 0 0 80px rgba(70, 120, 180, 0.05);
+}
+
+.game-header {
+  height: 40px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(9, 13, 19, 0.92);
+  border-bottom: 1px solid #293342;
+}
+
+.game-header > div:first-child span {
+  color: #e2e8f0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.game-header small {
+  margin-left: 8px;
+  color: #64748b;
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.game-header .level {
+  padding: 5px 12px;
+  border: 1px solid #334155;
+  border-radius: 20px;
+  color: #38bdf8;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.game-container {
+  width: 100%;
+  height: 570px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  background:
+    linear-gradient(180deg, #172335 0%, #0d1724 42%, #080b11 100%);
+}
+
+.game-container canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* CAMERA PANEL (right of the game) */
+
+.camera-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #293342;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #0e141d, #0a0e15);
+}
+
+.camera-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.camera-heading h3 {
+  margin: 5px 0 0;
+  font-size: 15px;
+}
+
+.tracking {
+  padding: 6px 12px;
+  border: 1px solid #1e3a2f;
+  border-radius: 20px;
+  color: #4ade80;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.camera {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid #303b4b;
+  border-radius: 12px;
+  background: #020305;
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.camera-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background: rgba(2, 3, 5, 0.55);
+  color: #9aa4b2;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+}
+
+.camera-status.error {
+  color: #ff7373;
+}
+
+.camera-status.ready {
+  background: transparent;
+  color: #4ade80;
+  font-size: 8px;
+}
+
+/* LIVE READOUT under the camera */
+
+.cam-readout {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.cam-readout > div {
+  padding: 10px;
+  border: 1px solid #334050;
+  border-radius: 10px;
+  background: rgba(5, 8, 12, 0.78);
+  text-align: center;
+}
+
+.cam-readout span {
+  display: block;
+  color: #718093;
+  font-size: 7px;
+  letter-spacing: 1.5px;
+}
+
+.cam-readout strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 15px;
+  color: #e2e8f0;
+  letter-spacing: 1px;
+}
+
+.cam-readout-combo strong {
+  color: #fbbf24;
+}
+
+.cam-readout-combo small {
+  color: #fde68a;
+  font-size: 10px;
+}
+
+.cam-readout-ai strong.ok {
+  color: #4ade80;
+}
+
+.cam-readout-ai strong.warn {
+  color: #fbbf24;
+}
+
+/* STATS */
+
+.stats-grid {
+  width: min(1280px, 100%);
+  margin: 14px auto;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.stat-card {
+  padding: 14px 16px;
+  border: 1px solid #293342;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #0e141d, #0a0e15);
+}
+
+.stat-card span {
+  display: block;
+  color: #687586;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.stat-card small {
+  font-size: 12px;
+  color: #7f8998;
+  font-weight: 600;
+}
+
+/* AI + BODY MONITOR */
+
+.control-grid {
+  width: min(1280px, 100%);
+  margin: 14px auto;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 10px;
+}
+
+.ai-card,
+.body-card {
+  padding: 18px;
+  border: 1px solid #293342;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #0e141d, #0a0e15);
+}
+
+.eyebrow {
+  color: #718093;
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.ai-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ai-card h2 {
+  margin: 7px 0 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.ppo-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 6px 11px;
+  border: 1px solid #1e3a2f;
+  border-radius: 20px;
+  color: #4ade80;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.ppo-badge span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+}
+
+.ppo-badge.offline {
+  border-color: #4d4020;
+  color: #fbbf24;
+}
+
+.ppo-badge.offline span {
+  background: #fbbf24;
+  box-shadow: 0 0 8px #fbbf24;
+}
+
+.decision-row {
+  display: flex;
+  gap: 28px;
+  margin-top: 14px;
+  padding: 12px 0;
+  border-top: 1px solid #293342;
+  border-bottom: 1px solid #293342;
+}
+
+.decision-row > div span {
+  display: block;
+  color: #687586;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.decision-row > div strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
+  color: #f1f5f9;
+}
+
+.decision-row b {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.ai-progress,
+.monitor-bar {
+  height: 6px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #1c2530;
+}
+
+.ai-progress div,
+.monitor-bar div {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #38bdf8, #a855f7);
+  transition: width 0.6s ease;
+}
+
+.ai-card button {
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #151d27;
+  color: #e2e8f0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.ai-card button:hover:not(:disabled) {
+  background: #1f2a38;
+  border-color: #38bdf8;
+}
+
+.ai-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* BODY MONITOR */
+
+.monitor-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 0;
+  border-top: 1px solid #293342;
+  border-bottom: 1px solid #293342;
+}
+
+.monitor-row span {
+  display: block;
+  color: #687586;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.monitor-row strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 15px;
+  color: #f1f5f9;
+}
+
+.monitor-detail {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.monitor-detail span {
+  color: #687586;
+  font-size: 7px;
+  letter-spacing: 1.2px;
+}
+
+.monitor-detail strong {
+  margin-right: 6px;
+  color: #cbd5e1;
+  font-size: 11px;
+}
+
+.balance-number {
+  margin-top: 14px;
+  font-size: 42px;
+  font-weight: 900;
+  color: #38bdf8;
+  text-align: center;
+  line-height: 1;
+}
+
+.balance-number small {
+  font-size: 16px;
+  color: #7f8998;
+}
+
+.balance-label {
+  margin-top: 6px;
+  color: #a855f7;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-align: center;
+}
+
+/* MOBILE */
+
+@media (max-width: 1100px) {
+  .play-area {
+    grid-template-columns: 1fr;
+  }
+
+  .camera-panel {
+    order: -1;
+  }
+}
+
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .control-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .runr-app {
+    padding: 10px;
+  }
+
+  .game-container {
+    height: 430px;
+  }
+
+  .runr-logo {
+    font-size: 28px;
+  }
+}
+
+.calibration-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 17, 31, 0.95);
+  z-index: 20;
+}
+
+.calibration-card {
+  text-align: center;
+  padding: 40px;
+  border: 1px solid #293342;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #0e141d, #0a0e15);
+}
+
+.calibration-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.calibration-card h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  color: #f1f5f9;
+}
+
+.calibration-card p {
+  margin: 0 0 24px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.calibration-bar {
+  width: 280px;
+  height: 8px;
+  background: #1c2530;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 auto 12px;
+}
+
+.calibration-bar div {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #a855f7);
+  transition: width 0.3s ease;
+}
+
+.calibration-percent {
+  font-size: 18px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 17, 31, 0.95);
+  z-index: 20;
+}
+
+.countdown-number {
+  font-size: 72px;
+  font-weight: 900;
+  color: #38bdf8;
+  text-shadow: 0 0 40px #38bdf8;
+  animation: pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.zone-progress {
+  margin-top: 12px;
+  padding: 8px;
+  border: 1px solid #293342;
+  border-radius: 10px;
+  background: rgba(5, 8, 12, 0.78);
+}
+
+.zone-progress-bar {
+  height: 10px;
+  background: #1c2530;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.zone-progress-bar div {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+.zone-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 8px;
+  color: #687586;
+  letter-spacing: 1px;
+}
+
+.next-exercise {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #293342;
+  border-radius: 10px;
+  background: rgba(5, 8, 12, 0.78);
+}
+
+.next-exercise span {
+  color: #718093;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.next-exercise strong {
+  color: #fbbf24;
+  font-size: 14px;
+}
+
+.workout-summary {
+  width: min(1280px, 100%);
+  margin: 14px auto;
+  padding: 18px;
+  border: 1px solid #293342;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #0e141d, #0a0e15);
+}
+
+.workout-summary h3 {
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: 1px;
+}
+
+.zone-history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.zone-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
