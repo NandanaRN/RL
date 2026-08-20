@@ -1,7 +1,6 @@
 # RUNR — AI Body-Controlled Endless Runner
 
 > **Academic Project:** Applied Reinforcement Learning
-> **Author:** Nandana R Nair | Reg No: 030 | MCA B
 
 **RUNR** is a browser-based AI exergaming application where the **player's body becomes the controller**. Using real-time computer vision and a Proximal Policy Optimization (PPO) reinforcement learning agent, RUNR adapts the game's difficulty according to the player's performance.
 
